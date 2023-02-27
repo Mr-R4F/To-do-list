@@ -1,0 +1,67 @@
+@center: center;
+@pointer: pointer;
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#topBar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #c6c6c6;
+    height: 170px;
+    
+    span {
+        align-self: flex-end;
+        margin-left: 20rem;
+        font-size: xx-large;
+    }
+
+    svg {
+        align-self: flex-start;
+        margin-top: 1rem;
+        margin-right: 1.5rem;
+        cursor: @pointer;
+    }
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+}
+
+.toDoList {
+    width: 680px;
+    height: 630px;
+
+    #addNewTask, .tasks {
+        background-color: #2B303E;
+        border-radius: 5px;
+    }
+
+    #addNewTask {
+        display: flex;
+        margin-top: -2rem;
+        height: 80px;
+
+        svg {
+            fill: #FFF;
+            width: 25px;
+            margin-left: 1rem;
+            margin-right: 1rem;
+            cursor: @pointer;
+        }
+
+        input {
+            width: 100%;
+            background-color: transparent;
+            outline: none;
+            border: 0;
+            font-size: xx-large;
+            color: #FFF;
+        }
+    }
+}
+
