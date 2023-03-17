@@ -1,67 +1,140 @@
-@center: center;
-@pointer: pointer;
-
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 
-#topBar {
-    display: flex;
-    justify-content: space-between;
-    background-color: #c6c6c6;
-    height: 170px;
-    
-    span {
-        align-self: flex-end;
-        margin-left: 20rem;
-        font-size: xx-large;
-    }
-
-    svg {
-        align-self: flex-start;
-        margin-top: 1rem;
-        margin-right: 1.5rem;
-        cursor: @pointer;
-    }
+body {
+    .displayFlex();
+    margin-top: 4rem;
+    background-color: #82868B;
 }
 
-.container {
+.displayFlex {
     display: flex;
     justify-content: center;
+    align-items: center; 
 }
 
-.toDoList {
-    width: 680px;
-    height: 630px;
+.circleStyle {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background-color: #82868B;
+}
 
-    #addNewTask, .tasks {
-        background-color: #2B303E;
-        border-radius: 5px;
-    }
+.container { width: 560px; }
 
-    #addNewTask {
-        display: flex;
-        margin-top: -2rem;
-        height: 80px;
+#title {
+    font-size: 36px;
+    color: #FFF;
+    margin-bottom: 2.5rem;
+}
 
-        svg {
+.row,
+.box { border-radius: 5px; }
+
+.top, 
+.bottom {
+    padding: 10px;
+    height: 70px;
+    background-color: #323C4A;
+}
+
+.box {
+    padding: 10px;
+    height: 50px;
+    width: 540px;
+    background-color: #515A64;
+}
+
+.top {
+    .displayFlex();
+    margin-bottom: 1rem;
+
+    .box {
+        .displayFlex();
+        justify-content: space-between;
+        background-color: #515A64;
+
+        .addButton:first-child {
+            .circleStyle();
+        }
+        
+        .addButton:nth-child(3),
+        #searchButton{
+            width: 22px;
+            height: 22px;
             fill: #FFF;
-            width: 25px;
-            margin-left: 1rem;
-            margin-right: 1rem;
-            cursor: @pointer;
         }
 
         input {
-            width: 100%;
-            background-color: transparent;
+            width: 400px;
+            height: 40px;
+            font-size: x-large;
             outline: none;
             border: 0;
-            font-size: xx-large;
+            background: transparent;
             color: #FFF;
+           
+            &:focus {
+                border-bottom: 1px solid #FFF;
+            }
         }
     }
 }
 
+.bottom {
+    height: 660px;
+    background-color: #323C4A;
+
+    hr {
+        margin: 1rem 0;
+    }
+
+    .box {
+        .displayFlex(); 
+        justify-content: space-between;
+
+        .task {
+            font-size: 1.25rem;
+            color: #FFF;
+            width: 440px;
+            height: 40px;
+            .displayFlex();
+        }
+        
+        #checkButton {
+            .circleStyle();
+        }
+        
+        #removeButton {
+            width: 22px;
+            height: 22px;
+            fill: #FFF;
+        }
+    }
+
+    .row:nth-child(3) {
+        .item:first-child {
+            .displayFlex();
+            width: 140px;
+            height: 30px;
+            background-color: #515A64;
+            border-radius: 10px;
+
+            .itemContent {
+                padding: 0 .6rem;
+                font-size: 12px;
+                
+                span {
+                    color: #ececec98;
+                }
+            }
+        }
+
+        .item:last-child {
+            .displayFlex();
+        }
+    }
+}
