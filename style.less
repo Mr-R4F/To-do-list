@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
+@color: #FFF;
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body#dark {
+    .displayFlex();
+    margin-top: 4rem;
+    background-color: #82868B;
+    font-family: 'Roboto', sans-serif;
+}
+
+.displayFlex {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+.circleStyle {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background-color: #82868B;
+}
+
+.container { 
+    width: 560px; 
+    height: 660px;
+}
+
+#title {
+    font-size: 36px;
+    font-weight: 500;
+    color: @color;
+    margin-bottom: 2.5rem;
+}
+
+.row,
+.box { border-radius: 5px; }
+
+.top { height: 70px;}
+
+.top, 
+.tasks,
+.bottom { padding: 10px; }
+
+.top, 
+.tasks { 
+    background-color: #323C4A; 
+    box-shadow: 1px 1px 5px #474747;
+}
+
+.box {
+    padding: 10px;
+    height: 50px;
+    width: 540px;
+    background-color: #515A64;
+}
+
+.top {
+    .displayFlex();
+    margin-bottom: 1rem;
+
+    .box {
+        .displayFlex();
+        justify-content: space-between;
+        background-color: #515A64;
+
+        .addButton:first-child { .circleStyle(); }
+        
+        .addButton:nth-child(3),
+        #searchButton{
+            width: 22px;
+            height: 22px;
+            fill: @color;
+        }
+
+        input {
+            width: 400px;
+            height: 40px;
+            font-size: x-large;
+            outline: none;
+            border: 0;
+            background: transparent;
+            color: @color;
+           
+            &:focus { border-bottom: 1px solid @color; }
+        }
+    }
+}
+
+.tasks {
+    height: 660px;
+
+    .box {
+        .displayFlex(); 
+        justify-content: space-between;
+        margin-bottom: .75rem;
+
+        .task {
+            font-size: 1.25rem;
+            color: @color;
+            width: 440px;
+            height: 40px;
+            .displayFlex();
+        }
+        
+        .checkButton { .circleStyle(); }
+        
+        .removeButton {
+            width: 22px;
+            height: 22px;
+            fill: @color;
+
+            path {
+                pointer-events: none;
+            }
+        }
+    }  
+}
+
+.addButton, 
+#searchButton, 
+.removeButton, 
+.checkButton,
+#selectBox,
+#pagination div,
+.bottom .row:last-child span:not(#taskAmount) { cursor: pointer; }
+
+hr {  margin: 1rem 0; }
+
+.bottom, hr {
+    position: relative;
+    bottom: 8.25rem;
+}
+
+.bottom {
+    font-size: .85rem;
+    color: #ECECEC98;
+ 
+    .row:first-child {
+        .displayFlex();
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    
+        .item,
+        #toggleColor {
+            width: 150px;
+            height: 35px;
+            background-color: #515A64;
+            border-radius: 10px;
+            padding: 2px;
+        }
+    
+        .item {
+            .displayFlex();
+       
+            .itemContent {
+                padding: 0 .5rem;
+                font-size: 12px;
+            }
+        }
+    
+        #toggleColor {
+            .displayFlex();
+            justify-content: space-between;
+
+            #selectBox {
+                width: 50px;
+                height: 20px;
+                background-color: #3C3C3C;
+                border-radius: 50px;
+
+                &::before {
+                    content: '';
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background-color: #D7D7D7;
+                }
+            }
+        }
+    }
+
+    .row:last-child, 
+    #pagination { .displayFlex(); }
+
+    .row:last-child {
+        justify-content: space-between;
+
+        .item {
+            #taskAmount { padding-right: 1.1rem; }
+
+            #all, 
+            #active, 
+            #done { padding: 0 .35rem;}
+
+            #removeAll { padding-left: 1.1rem; }
+        }
+
+        #pagination {
+            div {
+                .displayFlex();
+                width: 25px;
+                height: 25px;
+                background-color: #515A64;
+                border-radius: 5px;
+            }
+
+            .page { margin: 0 .50rem; }
+        }
+    }
+}
