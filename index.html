@@ -16,7 +16,7 @@
         <div class="row top">
             <div class="box">                
                 <span class="addButton"></span>
-                <input type="text" id="addTask" maxlength="70"><!-- dinamico -->
+                <input type="text" id="addTask" maxlength="70">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="addButton"><!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
                     <path d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z"/>
                 </svg>
@@ -76,10 +76,10 @@
             <div class="row">
                 <div class="item">
                     <span id="taskAmount">
-                        <span id="amount">9</span><!-- dinamico -->
-                        Tarefas
+                        <span id="amount"></span>
+                        Tarefa(s)
                     </span>
-                    <span id="all">Todas</span>
+                    <span id="all" class="selected">Todas</span>
                     <span id="active">Ativas</span>
                     <span id="done">Concluídas</span>
                     <span id="removeAll">Remover tudo</span>
