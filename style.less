@@ -8,7 +8,7 @@
     box-sizing: border-box;
 }
 
-body {
+body#dark {
     .displayFlex();
     margin-top: 4rem;
     background-color: #82868B;
@@ -50,7 +50,10 @@ body {
 .bottom { padding: 10px; }
 
 .top, 
-.tasks { background-color: #323C4A; }
+.tasks { 
+    background-color: #323C4A; 
+    box-shadow: 1px 1px 5px #474747;
+}
 
 .box {
     padding: 10px;
@@ -93,7 +96,6 @@ body {
 
 .tasks {
     height: 660px;
-    background-color: #323C4A;
 
     .box {
         .displayFlex(); 
@@ -108,20 +110,26 @@ body {
             .displayFlex();
         }
         
-        #checkButton { .circleStyle(); }
+        .checkButton { .circleStyle(); }
         
-        #removeButton {
+        .removeButton {
             width: 22px;
             height: 22px;
             fill: @color;
+
+            path {
+                pointer-events: none;
+            }
         }
     }  
 }
 
 .addButton, 
 #searchButton, 
-#removeButton, 
-#checkButton,
+.removeButton, 
+.checkButton,
+#selectBox,
+#pagination div,
 .bottom .row:last-child span:not(#taskAmount) { cursor: pointer; }
 
 hr {  margin: 1rem 0; }
@@ -161,24 +169,39 @@ hr {  margin: 1rem 0; }
         #toggleColor {
             .displayFlex();
             justify-content: space-between;
+
+            #selectBox {
+                width: 50px;
+                height: 20px;
+                background-color: #3C3C3C;
+                border-radius: 50px;
+
+                &::before {
+                    content: '';
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background-color: #D7D7D7;
+                }
+            }
         }
     }
 
     .row:last-child, 
-    #pagination {
-        .displayFlex();
-    }
+    #pagination { .displayFlex(); }
 
     .row:last-child {
         justify-content: space-between;
 
         .item {
-            #taskAmount { padding-right: 1.70rem; }
+            #taskAmount { padding-right: 1.1rem; }
 
-            #all, #active, 
-            #done, #removeAll { 
-                padding-right: 1rem;
-            }
+            #all, 
+            #active, 
+            #done { padding: 0 .35rem;}
+
+            #removeAll { padding-left: 1.1rem; }
         }
 
         #pagination {
@@ -189,6 +212,8 @@ hr {  margin: 1rem 0; }
                 background-color: #515A64;
                 border-radius: 5px;
             }
+
+            .page { margin: 0 .50rem; }
         }
     }
 }

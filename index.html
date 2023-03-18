@@ -9,7 +9,7 @@
         <script src="script.js" defer></script>
     <title>To do list</title>
 </head>
-<body>
+<body id="dark">
     <div class="container">
         <div id="title">TO DO LIST</div>
 
@@ -26,15 +26,7 @@
             </div>
         </div>
 
-        <div class="row tasks">
-            <div class="box">
-                <span id="checkButton"></span>
-                <div class="task">Estudar Java Script</div>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" id="removeButton"><!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-                    <path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/>
-                </svg>
-            </div>
-        </div>
+        <div class="row tasks"></div>
 
         <hr>
 
@@ -43,7 +35,7 @@
                 <div class="item">
                     <div class="itemContent">
                         <span id="minute">00</span>
-                        <span id="dots">:</span>
+                        <span class="dots">:</span>
                         <span id="hour">00</span>
                     </div>
 
@@ -69,7 +61,7 @@
                         
                     <span id="selectBox"></span>
                     
-                    <svg width="27" height="27" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="sunIcon">
+                    <svg width="24" height="24" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="sunIcon">
                         <rect width="22.5" height="22.5" fill="url(#pattern1)"/>
                         <defs>
                             <pattern id="pattern1" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -94,11 +86,31 @@
                 </div>
 
                 <div id="pagination">
-                    <div id="back">b</div>
+                    <div id="back">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <rect width="12" height="12" fill="url(#pattern3)"/>
+                            <defs>
+                                <pattern id="pattern3" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                    <use xlink:href="#image0_19_391" transform="scale(0.0111111)"/>
+                                </pattern>
+                                <image id="image0_19_391" width="90" height="90" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC4ElEQVR4nO3dP4sTQRgG8CioJxba+Ae1sRb80/gRtFE/hoUWHlgIdoJfQETs/QwWBxbbJTv7PrO7p+GQoNiIYlDEQrnGGxm5gxA3e9lk9t1N8vxgusvszbDZZzfzZtLpEBERERERVTAYDI5U+XuqMLEAHgB4IyJ/ADgRGQB41O12j07bD5Ww1l4C0PeTW9RE5GMcxxfK+qASzrkDANZFZHvSJI+091mWnSjrjwoYY86IyMYUEzzanhT1RRMAuCkiw4qT7NuHSX3SCB9qIvJcRHZmmOR/LYqitdE+aUyappfLAm+atnstPzTeN3UqB95+zXJSC+R5fgrAqwATvNfuFR1npWH2wJvU3vb7/cNNj2upAg//X5vzOI7PNz221jDGXBSRzYBnsW8v8zw/1vTYWhN41to7AH4FPIuH1tpbTY9tmQPPAXhtrT3b9NhaA8ANAJ8DnsXbIvLQOXew6bG1QhRFawCeBg68LWPMlabH1hqGgacWeL8ZeDXJGXj1AwOvXhEDr36GgVcvx8CrX87AUwu8L3zCqwkDTwEDT2cN736gNTzHjzQLMPAUMPBqxsBTqm8DkAa8Fu/4hVeW0Y7wFT2BJ3noSwg0TpCF4otNAk7yhn93ND2mVhKRXog1PADr/paw6fG0FoCfXMNTICI/5p3oJEmuavyvC01Eurx0KABwl2God3tneXungA8sS/AInjAoiwG4zjo5JfyYdAlqmZMkua05joXBpSxFDEplYFDqyVlAo8cxKHUZFjnqifhEqQsMSj05g1KPY1DqMgxKPRGDUhcYlHpyBqUex6DUZRiUi73VD4CU+3fobV71juXCYfcfLVsyezzpWCvPBQxKv70xK1v1gvL4fsdaed0AQdnr9U6v/ETW/UQpIl+nPgjNFZQvdl9ONe7E+z3LsnOVDkDVfkwBwDcRuTb2Mpqjntt/R31zLyxF5BOAZ2manpypUyrnN33lbRwRERERUafV/gJzBDx3ccFv7gAAAABJRU5ErkJggg=="/>
+                            </defs>
+                        </svg>
+                    </div>
                     <div class="page">1</div>
-                    <div id="dots">...</div>
+                    <div class="dots">...</div>
                     <div class="page">3</div>
-                    <div id="go">g</div>
+                    <div id="go">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <rect width="12" height="12" fill="url(#pattern4)"/>
+                            <defs>
+                                <pattern id="pattern4" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                    <use xlink:href="#image0_19_390" transform="scale(0.0111111)"/>
+                                </pattern>
+                                <image id="image0_19_390" width="90" height="90" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC5UlEQVR4nO2dPYsTQRjHc76gnoUvhR4KfgFRtPMTaKN+DDkbvU6wFe1FLGwtU1scWGzlhtnnP+4Yz0OCiIgoBNTK4xpvZHGFO8yZhMw8s2v+P5g68/xJ5rfzspNOhxBCCCGEENJYut3u3izL9qXux39JWZZHReQ+gHcAPIANAMZae4OhBwLAOQAf64D9iPbaWns+1OfNJf1+/5iIfPpHyL5qIrIJYMV7v5C6z61ERB6MCxk7A181xiyl7nfrAPB+mqDxO+whgKup+94aACxOGzJ2tqfOucOp62g8g8HgwIxBewBrFOUEAHg7a9hCUU4U9N0A32pPUY4PelFE3gQMe0hR7h72GRF5FTDsLRF5nOf5oUmGr7kiy7KDAB5WIQUMfL0oioupa2skAC4D+Bww7E0RueO935O6tsbhnDsB4FmosOv23Fp7KnVtjcN7v1Ct3AH4EVKURVFcT11bIzHGnA0pyrpxRjkKilIZUJR6OIpSD09R6mIoSj0yzih1AUWph6Mo9fAUpS6GotQjoyh1AUWph6Mo9fAUpS6GotSj2ritNnBD7lECeNnr9U4qltEerLXX6iMKoXZxAGB/6roaiTFmqTqlGvCbfTN1TY0WJYCV+njZrEG/SF3PXIhSRL6nrmNegv6Wuo7G4jl0tE+GIrKs0O3OvD/eCV/Xiz9hsZywbINTcL1FpY2AQ8WwGn5i9701OC6TxgfAFZ65buFWljHmQsx+twrDNee4eAovPo7CUxPel4BjMV8y2g6Fp4Ch8OLiKbz4OAovPqDw4pJxhhcfQ+Gp7OHdDrT9zyXNUTgKLz6g8OJC4SlQ3aMBoAw4Fm/xqp/Rl1cNQgoPvOXxbwDcCxjyKu8t3eURTkQ+cEkzMnmeH+cengLVz5zC0xs6pj73Jjy0Mj0i8oTCU6Asy9MAvk6yhwdePT8bAC6NCXuNd0SHXUh69OePFUTkp4g4ALf4OlkkABzhlfKEEEIIIYSQzhT8AkaZQYblDnmcAAAAAElFTkSuQmCC"/>
+                            </defs>
+                        </svg>                            
+                    </div>
                 </div>
             </div>
         </div>
