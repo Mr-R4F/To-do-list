@@ -130,7 +130,7 @@ body#dark {
 .checkButton,
 #selectBox,
 #pagination div,
-.bottom .row:last-child span:not(#taskAmount) { cursor: pointer; }
+.bottom .row:last-child span:not(#taskAmount, #amount) { cursor: pointer; }
 
 hr {  margin: 1rem 0; }
 
@@ -140,7 +140,7 @@ hr {  margin: 1rem 0; }
 }
 
 .bottom {
-    font-size: .85rem;
+    font-size: 12.5px;
     color: #ECECEC98;
  
     .row:first-child {
@@ -195,13 +195,13 @@ hr {  margin: 1rem 0; }
         justify-content: space-between;
 
         .item {
-            #taskAmount { padding-right: 1.1rem; }
+            #taskAmount { padding-right: .9rem; }
 
             #all, 
             #active, 
             #done { padding: 0 .35rem;}
 
-            #removeAll { padding-left: 1.1rem; }
+            #removeAll { padding-left: .9rem; }
 
             #all, 
             #active, 
@@ -228,7 +228,7 @@ hr {  margin: 1rem 0; }
                 border-radius: 5px;
             }
 
-            .page { margin: 0 .50rem; }
+            .page { margin: 0 .55rem; }
         }
     }
 }
