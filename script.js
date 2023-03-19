@@ -3,31 +3,29 @@ const REMOVE_TASK   = document.querySelectorAll('.removeButton');
 const CHECK_TASK    = document.querySelectorAll('.checkButton');
 const SEARCH_TASK   = document.getElementById('searchButton');
 const INPUT_TASK    = document.getElementById('addTask');
+const SELECT_BOX    = document.getElementById('selectBox');
 const LIST          = document.querySelector('.tasks');
+const BODY          = document.querySelector('body');
 
 const REMOVE_ALL    = document.getElementById('removeAll');
 const ALL_TASKS     = document.getElementById('all');
 const ACTIVE_TASKS  = document.getElementById('active');
 const DONE_TASKS    = document.getElementById('done');
+
 //const ITEM = document.querySelector('.bottom .row:last-child .item');*
 
 let date            = undefined;
 let tasks           = [];
 
-/* ITEM.onclick = function(e) {*
-    if(e.target.classList.contains('selected')) {
-        e.target.classList.remove('selected');
-        e.target.style.color = '#ECECEC98';
-    } else {
-        e.target.classList.add('selected'); 
-        e.target.style.color = '#FFF';
-    }
-    console.log(e.target.parentElement.children[2].className);
-} */
+window.onload = function() {
+    showDate();
+    showTasks();
+}
 
+//--
 ADD_TASK.forEach(el => {
     el.onclick = function addTask() {
-        if(INPUT_TASK.value == '') {
+        if(INPUT_TASK.value === '') {
             alert('Insira uma tarefa');
         } else {
             if( localStorage.getItem('Tarefas') !== null) {
@@ -40,6 +38,19 @@ ADD_TASK.forEach(el => {
         }
     }
 });
+
+function showTasks() {
+    const TASKS = JSON.parse(localStorage.getItem('Tarefas'));
+
+    if(!TASKS) return; //Quando não há nada no local
+    
+    TASKS.forEach(el => {
+        createElements(el);
+    }); 
+    tasksAmount();
+};
+
+//EDIT_TASK
 
 LIST.onclick = function removeTask(e) {
     if(e.target.classList.contains('removeButton')) {
@@ -55,16 +66,31 @@ REMOVE_ALL.onclick = function removeTasks() {
     tasks = [];
     removeAllFromStorage();
 }
+//--
 
-window.onload = function showTasks() {
-    const TASKS = JSON.parse(localStorage.getItem('Tarefas'));
-    if(!TASKS) return; //Quando não há nada no local
-    
-    TASKS.forEach(el => {
-        createElements(el);
-    }); 
-    tasksAmount();
-};
+SELECT_BOX.onclick = function toggleColor() {
+    const TOGGLE_SELECT = document.getElementById('toggleSelect');
+
+    if(BODY.id === 'dark') {
+        BODY.id = 'white';
+        TOGGLE_SELECT.style.left = '1.9rem';
+    } else {
+        BODY.id = 'dark';
+        TOGGLE_SELECT.style.left = '0';
+    }
+}
+
+/* ITEM.onclick = function(e) {*
+    if(e.target.classList.contains('selected')) {
+        e.target.classList.remove('selected');
+        e.target.style.color = '#ECECEC98';
+    } else {
+        e.target.classList.add('selected'); 
+        e.target.style.color = '#FFF';
+    }
+    console.log(e.target.parentElement.children[2].className);
+} */
+
 
 /* function selectOption(el) {*
     if(el.classList.contains('selected')) {
@@ -138,5 +164,4 @@ function showDate() {
     document.getElementById('hour').innerText   = HOURS;
 }
 
-showDate();
 setInterval(showDate, 1000);

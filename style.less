@@ -8,12 +8,16 @@
     box-sizing: border-box;
 }
 
-body#dark {
+body#dark, 
+body#white {
     .displayFlex();
     margin-top: 4rem;
-    background-color: #82868B;
     font-family: 'Roboto', sans-serif;
 }
+
+body#dark { background-color: #82868B; }
+
+body#white{ background-color: @color; }
 
 .displayFlex {
     display: flex;
@@ -176,16 +180,19 @@ hr {  margin: 1rem 0; }
                 background-color: #3C3C3C;
                 border-radius: 50px;
 
-                &::before {
-                    content: '';
+                #toggleSelect {
                     display: inline-block;
+                    position: relative;
+                    left: 0;
                     width: 20px;
                     height: 20px;
                     border-radius: 50%;
-                    background-color: #D7D7D7;
-                }
+                    background-color: #D7D7D7;  
+                    transition: .25s ease-in-out;
+                } 
             }
         }
+        
     }
 
     .row:last-child, 
