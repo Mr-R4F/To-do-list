@@ -105,6 +105,8 @@ SELECT_BOX.onclick = function toggleColor() {
     }
 } */
 function getColor() {
+    if(!localStorage.getItem('ColorMode')) return;
+
     BODY.id = localStorage.getItem('ColorMode');
     BODY.id === 'white' ? TOGGLE_SELECT.style.left = '1.9rem' : TOGGLE_SELECT.style.left = '0';
 }
