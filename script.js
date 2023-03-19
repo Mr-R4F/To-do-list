@@ -1,25 +1,20 @@
-const ADD_TASK = document.querySelectorAll('.addButton');
-const REMOVE_TASK = document.querySelectorAll('.removeButton');
-const CHECK_TASK = document.querySelectorAll('.checkButton');
-const SEARCH_TASK = document.getElementById('searchButton');
-const INPUT_TASK = document.getElementById('addTask');
-const LIST = document.querySelector('.tasks');
+const ADD_TASK      = document.querySelectorAll('.addButton');
+const REMOVE_TASK   = document.querySelectorAll('.removeButton');
+const CHECK_TASK    = document.querySelectorAll('.checkButton');
+const SEARCH_TASK   = document.getElementById('searchButton');
+const INPUT_TASK    = document.getElementById('addTask');
+const LIST          = document.querySelector('.tasks');
 
-const REMOVE_ALL = document.getElementById('removeAll');
-const ALL_TASKS = document.getElementById('all');
-const ACTIVE_TASKS = document.getElementById('active');
-const DONE_TASKS = document.getElementById('done');
+const REMOVE_ALL    = document.getElementById('removeAll');
+const ALL_TASKS     = document.getElementById('all');
+const ACTIVE_TASKS  = document.getElementById('active');
+const DONE_TASKS    = document.getElementById('done');
+//const ITEM = document.querySelector('.bottom .row:last-child .item');*
 
-const AMOUNT = document.getElementById('amount');
-const ITEM = document.querySelector('.bottom .row:last-child .item');
+let date            = undefined;
+let tasks           = [];
 
-let tasks = [];
-
-
-
-
-
-/* ITEM.onclick = function(e) {
+/* ITEM.onclick = function(e) {*
     if(e.target.classList.contains('selected')) {
         e.target.classList.remove('selected');
         e.target.style.color = '#ECECEC98';
@@ -35,10 +30,10 @@ ADD_TASK.forEach(el => {
         if(INPUT_TASK.value == '') {
             alert('Insira uma tarefa');
         } else {
-            if(localStorage.getItem('Tarefas') !== null) {
+            if( localStorage.getItem('Tarefas') !== null) {
                 tasks = JSON.parse(localStorage.getItem('Tarefas'));
             }
-            
+
             createElements(INPUT_TASK.value);
             tasks.push(INPUT_TASK.value);
             addToStorage(tasks);
@@ -57,6 +52,7 @@ LIST.onclick = function removeTask(e) {
 
 REMOVE_ALL.onclick = function removeTasks() {
     LIST.innerHTML = '';
+    tasks = [];
     removeAllFromStorage();
 }
 
@@ -70,8 +66,7 @@ window.onload = function showTasks() {
     tasksAmount();
 };
 
-function selectOption(el) {
-
+/* function selectOption(el) {*
     if(el.classList.contains('selected')) {
         el.classList.remove('selected');
         el.style.color = '#FFF';
@@ -80,18 +75,18 @@ function selectOption(el) {
         el.classList.add('selected');
         el.style.color = 'red';
     }
-}
+} */
 
 function createElements(val) {
-    const BOX = document.createElement('div');
-    const CHECK_BUTTON = document.createElement('span');
-    const TASK = document.createElement('div');
-    const SVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const PATH = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const BOX           = document.createElement('div');
+    const CHECK_BUTTON  = document.createElement('span');
+    const TASK          = document.createElement('div');
+    const SVG           = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const PATH          = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-    BOX.className = 'box';
-    CHECK_BUTTON.className = 'checkButton';
-    TASK.className = 'task';
+    BOX.className           = 'box';
+    CHECK_BUTTON.className  = 'checkButton';
+    TASK.className          = 'task';
     TASK.appendChild(document.createTextNode(val));
   
     SVG.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -120,10 +115,28 @@ function removeFromStorage(task) {
 }
 
 function removeAllFromStorage() {
-    localStorage.removeItem('Tarefa');
+    localStorage.removeItem('Tarefas');
     tasksAmount();
 }
 
 function tasksAmount() {
-    AMOUNT.innerText = JSON.parse(localStorage.getItem('Tarefas')).length;
+    document.getElementById('amount').innerText = JSON.parse(localStorage.getItem('Tarefas')) === null ? 0 : JSON.parse(localStorage.getItem('Tarefas')).length;
 }
+
+function showDate() {
+    date            = new Date();
+    const DAY       = date.getDate();
+    const MONTH     = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+    const YEAR      = date.getFullYear();
+    const HOURS     = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+    const MINUTES   = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+
+    document.getElementById('day').innerText    = DAY;
+    document.getElementById('month').innerText  = MONTH;
+    document.getElementById('year').innerText   = YEAR;
+    document.getElementById('minute').innerText = MINUTES;
+    document.getElementById('hour').innerText   = HOURS;
+}
+
+showDate();
+setInterval(showDate, 1000);
