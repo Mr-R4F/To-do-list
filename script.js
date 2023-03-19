@@ -4,6 +4,7 @@ const CHECK_TASK    = document.querySelectorAll('.checkButton');
 const SEARCH_TASK   = document.getElementById('searchButton');
 const INPUT_TASK    = document.getElementById('addTask');
 const SELECT_BOX    = document.getElementById('selectBox');
+const TOGGLE_SELECT = document.getElementById('toggleSelect');
 const LIST          = document.querySelector('.tasks');
 const BODY          = document.querySelector('body');
 
@@ -20,6 +21,7 @@ let tasks           = [];
 window.onload = function() {
     showDate();
     showTasks();
+    getColor();
 }
 
 //--
@@ -69,14 +71,14 @@ REMOVE_ALL.onclick = function removeTasks() {
 //--
 
 SELECT_BOX.onclick = function toggleColor() {
-    const TOGGLE_SELECT = document.getElementById('toggleSelect');
-
     if(BODY.id === 'dark') {
         BODY.id = 'white';
         TOGGLE_SELECT.style.left = '1.9rem';
+        localStorage.setItem('ColorMode', BODY.id);
     } else {
         BODY.id = 'dark';
         TOGGLE_SELECT.style.left = '0';
+        localStorage.setItem('ColorMode', BODY.id);
     }
 }
 
@@ -102,6 +104,10 @@ SELECT_BOX.onclick = function toggleColor() {
         el.style.color = 'red';
     }
 } */
+function getColor() {
+    BODY.id = localStorage.getItem('ColorMode');
+    BODY.id === 'white' ? TOGGLE_SELECT.style.left = '1.9rem' : TOGGLE_SELECT.style.left = '0';
+}
 
 function createElements(val) {
     const BOX           = document.createElement('div');
