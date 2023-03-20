@@ -1,8 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
 
+:root { color-scheme: light dark; }
+
 @colorWhite: #FFF;
 @colorDark: #000;
 
+//--
 .displayFlex {
     display: flex;
     justify-content: center;
@@ -16,74 +19,52 @@
     background-color: #82868B;
 }
 
-.changeColorTheme(@color, @bgList, @fillColor, @bg, @colorBottom, @optionsColor) {
-    @media (prefers-color-scheme: light) {
-        color: @color;
+.changeColorTheme(@color, @bgList, @fillColor, @bg, @colorBottom, @optionsColor, @selectBoxColor, @circleColor) {
+    color: @color;
     
-        .top,
-        .tasks { background-color: @bgList; }
+    .top,
+    .tasks { background-color: @bgList; }
     
-        .box,
-        .row:first-child .item,
-        #toggleTheme, 
-        #pagination div { background-color: @bg; }
+    .box,
+    .row:first-child .item,
+    #toggleTheme, 
+    #pagination div { background-color: @bg; }
     
-        svg { fill: @fillColor; }
-    
-        .bottom { color: @colorBottom; }
-    
-        #all, 
-        #active, 
-        #done, 
-        #removeAll {
-            &:hover {
-                color: @optionsColor; 
-            }
-        }
-    
-        .selected { color: @optionsColor; }
-    
-        input {
-            &:focus { border-bottom: 1px solid @color; }
-        }
+    #selectBox {
+        background-color: @selectBoxColor;
+
+        #circle { background-color: @circleColor; } 
     }
 
-    @media (prefers-color-scheme: dark) {
+    svg { fill: @fillColor; }
+    
+    .bottom { color: @colorBottom; }
+    
+    #all, 
+    #active, 
+    #done, 
+    #removeAll {
+        &:hover {
+            color: @optionsColor; 
+        }
+    }
+    
+    .selected { color: @optionsColor; }
+    
+    input {
         color: @color;
-    
-        .top,
-        .tasks { background-color: @bgList; }
-    
-        .box,
-        .row:first-child .item,
-        #toggleTheme, 
-        #pagination div { background-color: @bg; }
-    
-        svg { fill: @fillColor; }
-    
-        .bottom { color: @colorBottom; }
-    
-        #all, 
-        #active, 
-        #done, 
-        #removeAll {
-            &:hover {
-                color: @optionsColor; 
-            }
-        }
-    
-        .selected { color: @optionsColor; }
-    
-        input {
-            color: @color;
-            &:focus { border-bottom: 1px solid @color; }
-        }
+        &:focus { border-bottom: 1px solid @color; }
     } 
 }
 
-:root {
-    color-scheme: light dark;
+@media (prefers-color-scheme: dark) {
+    .changeColorTheme(@colorWhite, #323C4A, @colorWhite, #515A64, #ECECEC98, @colorWhite, #3C3C3C, #D7D7D7);
 }
+
+@media (prefers-color-scheme: light) {
+    .changeColorTheme(@colorDark, #F4F1F0, #616161, @colorWhite, #767373a4, @colorDark, #D7D7D7, #3C3C3C);
+}
+//---
 
 * {
     padding: 0;
@@ -99,12 +80,12 @@ body {
 
 body#dark { 
     background-color: #82868B; 
-    .changeColorTheme(@colorWhite, #323C4A, @colorWhite, #515A64, #ECECEC98, @colorWhite);
+    .changeColorTheme(@colorWhite, #323C4A, @colorWhite, #515A64, #ECECEC98, @colorWhite, #3C3C3C, #D7D7D7);
 }
 
 body#light { 
     background-color: @colorWhite;
-    .changeColorTheme(@colorDark, #F4F1F0, #616161, @colorWhite, #767373a4, @colorDark);
+    .changeColorTheme(@colorDark, #F4F1F0, #616161, @colorWhite, #767373a4, @colorDark, #D7D7D7, #3C3C3C);
 }
 
 .container { 
@@ -146,21 +127,20 @@ body#light {
 
         .addButton:first-child { .circleStyle(); }
         
-        .addButton:nth-child(3),
-        #searchButton {
+        .addButton:nth-child(3), #searchButton {
             width: 22px;
             height: 22px;
         }
-
-        input {
-            width: 400px;
-            height: 40px;
-            font-size: x-large;
-            outline: none;
-            border: 0;
-            background: transparent;
-        }
     }
+}
+
+input {
+    width: 400px;
+    height: 40px;
+    font-size: x-large;
+    outline: none;
+    border: 0;
+    background: transparent;
 }
 
 .tasks {
@@ -172,29 +152,40 @@ body#light {
         margin-bottom: .75rem;
 
         .task {
+            text-align: center;
             font-size: 1.25rem;
-            width: 440px;
+            width: 400px;
             height: 40px;
+            overflow: auto;
+
             .displayFlex();
-        }
-        
+        } 
+      
         .checkButton { .circleStyle(); }
         
         .removeButton {
             width: 22px;
             height: 22px;
+        }
 
+        .editButton {
+            width: 18px;
+            height: 18px;
+        }
+
+        .removeButton,
+        .editButton {
             path { pointer-events: none; }
         }
+
+        ::-webkit-scrollbar {
+            display: none;
+        } 
     }  
 }
 
-.addButton, 
-.removeButton, 
-.checkButton,
-#searchButton, 
-#selectBox,
-#pagination div,
+.addButton, .removeButton, .editButton, .checkButton, 
+#searchButton, #selectBox, #pagination div, 
 .bottom .row:last-child span:not(#taskAmount, #amount) { cursor: pointer; }
 
 hr {  margin: 1rem 0; }
@@ -212,13 +203,15 @@ hr {  margin: 1rem 0; }
         justify-content: space-between;
         margin-bottom: 1rem;
     
-        .item,
-        #toggleTheme {
+        .item, #toggleTheme {
             width: 150px;
             height: 35px;
             border-radius: 10px;
-            padding: 2px;
         }
+
+        .item { padding: 2px; }
+
+        #toggleTheme { padding: 5px 15px; }
     
         .item {
             .displayFlex();
@@ -236,7 +229,6 @@ hr {  margin: 1rem 0; }
             #selectBox {
                 width: 50px;
                 height: 20px;
-                background-color: #3C3C3C;
                 border-radius: 50px;
 
                 #circle {
@@ -246,7 +238,6 @@ hr {  margin: 1rem 0; }
                     width: 20px;
                     height: 20px;
                     border-radius: 50%;
-                    background-color: #D7D7D7;  
                     transition: .25s ease-in-out;
                 } 
             }
@@ -254,8 +245,7 @@ hr {  margin: 1rem 0; }
         
     }
 
-    .row:last-child, 
-    #pagination { .displayFlex(); }
+    .row:last-child, #pagination { .displayFlex(); }
 
     .row:last-child {
         justify-content: space-between;
@@ -263,16 +253,11 @@ hr {  margin: 1rem 0; }
         .item {
             #taskAmount { padding-right: .9rem; }
 
-            #all, 
-            #active, 
-            #done { padding: 0 .35rem;}
+            #all, #active, #done { padding: 0 .35rem;}
 
             #removeAll { padding-left: .9rem; }
 
-            #all, 
-            #active, 
-            #done, 
-            #removeAll {transition: .25s ease-in-out; }
+            #all, #active, #done, #removeAll {transition: .25s ease-in-out; }
         }
 
         #pagination {
