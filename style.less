@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
 
-@color: #FFF;
+@colorWhite: #FFF;
 @colorDark: #000;
 
 .displayFlex {
@@ -16,37 +16,73 @@
     background-color: #82868B;
 }
 
-.changeColor(@color, @bgList, @fillColor, @bg, @colorBottom, @optionsColor) {
-    color: @color;
+.changeColorTheme(@color, @bgList, @fillColor, @bg, @colorBottom, @optionsColor) {
+    @media (prefers-color-scheme: light) {
+        color: @color;
     
-    .top,
-    .tasks { background-color: @bgList; }
-
-    .box,
-    .row:first-child .item,
-    #toggleColor, 
-    #pagination div { background-color: @bg; }
-
-    svg {
-        fill: @fillColor;
-    }
-
-    .bottom {
-        color: @colorBottom;
-    }
-
-    #all, 
-    #active, 
-    #done, 
-    #removeAll {
-        &:hover {
-            color: @optionsColor; 
+        .top,
+        .tasks { background-color: @bgList; }
+    
+        .box,
+        .row:first-child .item,
+        #toggleTheme, 
+        #pagination div { background-color: @bg; }
+    
+        svg { fill: @fillColor; }
+    
+        .bottom { color: @colorBottom; }
+    
+        #all, 
+        #active, 
+        #done, 
+        #removeAll {
+            &:hover {
+                color: @optionsColor; 
+            }
+        }
+    
+        .selected { color: @optionsColor; }
+    
+        input {
+            &:focus { border-bottom: 1px solid @color; }
         }
     }
 
-    .selected {
-        color: @optionsColor;
-    }
+    @media (prefers-color-scheme: dark) {
+        color: @color;
+    
+        .top,
+        .tasks { background-color: @bgList; }
+    
+        .box,
+        .row:first-child .item,
+        #toggleTheme, 
+        #pagination div { background-color: @bg; }
+    
+        svg { fill: @fillColor; }
+    
+        .bottom { color: @colorBottom; }
+    
+        #all, 
+        #active, 
+        #done, 
+        #removeAll {
+            &:hover {
+                color: @optionsColor; 
+            }
+        }
+    
+        .selected { color: @optionsColor; }
+    
+        input {
+            color: @color;
+            &:focus { border-bottom: 1px solid @color; }
+        }
+    } 
+}
+
+:root {
+    color-scheme: light dark;
 }
 
 * {
@@ -55,8 +91,7 @@
     box-sizing: border-box;
 }
 
-body#dark, 
-body#white {
+body {
     .displayFlex();
     margin-top: 4rem;
     font-family: 'Roboto', sans-serif;
@@ -64,12 +99,12 @@ body#white {
 
 body#dark { 
     background-color: #82868B; 
-    .changeColor(@color, #323C4A, @color, #515A64, #ECECEC98, @color);
+    .changeColorTheme(@colorWhite, #323C4A, @colorWhite, #515A64, #ECECEC98, @colorWhite);
 }
 
-body#white { 
-    background-color: @color; 
-    .changeColor(@colorDark, #F4F1F0, #393939, @color, #767373a4, @colorDark);
+body#light { 
+    background-color: @colorWhite;
+    .changeColorTheme(@colorDark, #F4F1F0, #616161, @colorWhite, #767373a4, @colorDark);
 }
 
 .container { 
@@ -124,8 +159,6 @@ body#white {
             outline: none;
             border: 0;
             background: transparent;
-           
-            &:focus { border-bottom: 1px solid @color; }
         }
     }
 }
@@ -157,9 +190,9 @@ body#white {
 }
 
 .addButton, 
-#searchButton, 
 .removeButton, 
 .checkButton,
+#searchButton, 
 #selectBox,
 #pagination div,
 .bottom .row:last-child span:not(#taskAmount, #amount) { cursor: pointer; }
@@ -180,7 +213,7 @@ hr {  margin: 1rem 0; }
         margin-bottom: 1rem;
     
         .item,
-        #toggleColor {
+        #toggleTheme {
             width: 150px;
             height: 35px;
             border-radius: 10px;
@@ -196,7 +229,7 @@ hr {  margin: 1rem 0; }
             }
         }
     
-        #toggleColor {
+        #toggleTheme {
             .displayFlex();
             justify-content: space-between;
 
@@ -206,7 +239,7 @@ hr {  margin: 1rem 0; }
                 background-color: #3C3C3C;
                 border-radius: 50px;
 
-                #toggleSelect {
+                #circle {
                     display: inline-block;
                     position: relative;
                     left: 0;
