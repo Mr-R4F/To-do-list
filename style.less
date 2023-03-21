@@ -146,6 +146,15 @@ input {
 .tasks {
     height: 660px;
 
+    .noTask.hide { display: none; }
+
+    .noTask { 
+        .displayFlex(); 
+        font-size: 1.5rem;
+        position: relative;
+        top: 40%;
+    }
+
     .box {
         .displayFlex(); 
         justify-content: space-between;

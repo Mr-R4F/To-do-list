@@ -20,43 +20,73 @@ window.onload = function() {
 
 //--
 ADD_TASK.forEach(el => {
-    el.onclick = function addTask() {
-        if(INPUT_TASK.value === '') {
-            alert('Insira uma tarefa');
-        } else {
-            if(localStorage.getItem('Tarefas') !== null) {
-                tasks = JSON.parse(localStorage.getItem('Tarefas'));
-            }
-
-            createElements(INPUT_TASK.value);
-            tasks.push(INPUT_TASK.value);
-            addToStorage(tasks);
-        }
+    el.onclick = function() {
+       addTask();
     }
 });
+
+INPUT_TASK.onkeydown = function(event) {
+    if(event.key === 'Enter') addTask();
+}
+
+function addTask() {
+    if(INPUT_TASK.value === '') {
+        alert('Insira uma tarefa');
+    } else {
+        if(localStorage.getItem('Tarefas') !== null) {
+            tasks = JSON.parse(localStorage.getItem('Tarefas'));
+        } else if(document.querySelector('.noTask')) {
+            document.querySelector('.noTask').remove();
+        }
+
+        createElements(INPUT_TASK.value);
+        tasks.push(INPUT_TASK.value);
+        addToStorage(tasks);
+        console.log('Tarefa adicionada com sucesso!');
+    }
+}
 
 function showTasks() {
     const TASKS = JSON.parse(localStorage.getItem('Tarefas'));
 
-    if(!TASKS) return; //Quando não há nada no local
+    if(!TASKS) {
+        createText();
+        return;
+    } else if(document.querySelector('.noTask')) {
+        document.querySelector('.noTask').remove();
+    }
     
     TASKS.forEach(el => {
         createElements(el);
-    }); 
+    });
+
     tasksAmount();
 };
 
-//edit e remove
+//EDIT E REMOVE
 LIST.onclick = function(e) {
     if (e.target.classList.contains('editButton')) {
         e.target.previousElementSibling.disabled = false;
-
+        e.target.previousElementSibling.focus();
+        
         e.target.previousElementSibling.onblur = function() {
             e.target.previousElementSibling.disabled = true;
+            tasks = JSON.parse(localStorage.getItem('Tarefas'));
+            tasks
+            addToStorage(tasks);
+            console.log('Tarefa editada com sucesso!');
+        }
+
+        e.target.previousElementSibling.onkeydown = function(event) {
+            if(event.key === 'Enter') {
+                e.target.previousElementSibling.disabled = true;
+                console.log('Tarefa editada com sucesso!');
+            }
         }
     } else if (e.target.classList.contains('removeButton')) {
         e.target.parentElement.remove();
-        removeFromStorage(e.target.previousElementSibling.innerText);
+        removeFromStorage(e.target.parentElement.children[1].value);
+        console.log('Tarefa removida com sucesso!');
     } else {
         return;
     }
@@ -65,9 +95,20 @@ LIST.onclick = function(e) {
 REMOVE_ALL.onclick = function removeTasks() {
     LIST.innerHTML = '';
     tasks = [];
+    
+    createText();
     removeAllFromStorage();
 }
+
 //--
+function createText() {
+    const SPAN = document.createElement('span');
+
+    SPAN.className = 'noTask';
+    SPAN.classList.add('show');
+    SPAN.appendChild(document.createTextNode('Nenhuma tarefa ....'));
+    LIST.appendChild(SPAN);
+}
 
 function createElements(val) {
     const BOX           = document.createElement('div');
@@ -111,6 +152,13 @@ function addToStorage(task) {
 function removeFromStorage(task) {
     tasks = JSON.parse(localStorage.getItem('Tarefas'));
     tasks.splice(tasks.indexOf(task), 1);
+
+    if(tasks.length === 0) {
+        localStorage.removeItem('Tarefas');
+        createText();
+        return;
+    }
+    
     addToStorage(tasks);
     tasksAmount();
 }
