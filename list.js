@@ -10,7 +10,8 @@ const DONE_TASKS    = document.getElementById('done');
 const LIST          = document.querySelector('.tasks');
 
 let date            = undefined;
-let tasks           = [];
+let activeTasks, doneTasks, tasks;
+activeTasks = doneTasks = tasks = [];
 
 window.onload = function() {
     showDate();
@@ -33,14 +34,14 @@ function addTask() {
     if(INPUT_TASK.value === '') {
         alert('Insira uma tarefa');
     } else {
-        if(localStorage.getItem('Tarefas') !== null) {
+        if(localStorage.getItem('Tarefas')) {
             tasks = JSON.parse(localStorage.getItem('Tarefas'));
         } else if(document.querySelector('.noTask')) {
             document.querySelector('.noTask').remove();
         }
 
-        createElements(INPUT_TASK.value);
         tasks.push(INPUT_TASK.value);
+        createElements(INPUT_TASK.value);
         addToStorage(tasks);
         console.log('Tarefa adicionada com sucesso!');
     }
@@ -63,32 +64,56 @@ function showTasks() {
     tasksAmount();
 };
 
-//EDIT E REMOVE
+//EDIT, REMOVE e CHECK
 LIST.onclick = function(e) {
     if (e.target.classList.contains('editButton')) {
+        const PREVIOUS_VALUE = e.target.previousElementSibling.value;
         e.target.previousElementSibling.disabled = false;
         e.target.previousElementSibling.focus();
-        
-        e.target.previousElementSibling.onblur = function() {
-            e.target.previousElementSibling.disabled = true;
-            tasks = JSON.parse(localStorage.getItem('Tarefas'));
-            tasks
-            addToStorage(tasks);
-            console.log('Tarefa editada com sucesso!');
+        e.target.parentElement.children[0].style.backgroundColor = '#FFC353'; //edit flag
+        e.target.parentElement.children[0].classList.add('edit');
+
+        e.target.parentElement.children[0].onclick = function() {
+            if(e.target.previousElementSibling.disabled === true) return;
+            e.target.parentElement.children[0].style.backgroundColor = '#82868B';
+            e.target.parentElement.children[0].classList.remove('edit');
+            editTask(PREVIOUS_VALUE);
         }
 
         e.target.previousElementSibling.onkeydown = function(event) {
-            if(event.key === 'Enter') {
-                e.target.previousElementSibling.disabled = true;
-                console.log('Tarefa editada com sucesso!');
+            if(event.key === 'Enter')  {
+                e.target.parentElement.children[0].style.backgroundColor = '#82868B';
+                editTask(PREVIOUS_VALUE);
             }
         }
     } else if (e.target.classList.contains('removeButton')) {
         e.target.parentElement.remove();
         removeFromStorage(e.target.parentElement.children[1].value);
         console.log('Tarefa removida com sucesso!');
+    } else if(e.target.classList.contains('checkButton')) {
+        doneTask(e);
     } else {
         return;
+    }
+
+    function editTask(previousValue) {
+        const CURRENT_VALUE = e.target.previousElementSibling.value;
+        e.target.previousElementSibling.disabled = true;
+
+        tasks = JSON.parse(localStorage.getItem('Tarefas'));
+        tasks.splice(tasks.indexOf(previousValue), 1, CURRENT_VALUE);
+        addToStorage(tasks);
+        console.log('Tarefa editada com sucesso!');
+    }
+}
+
+function doneTask(e) {
+    if(!e.target.parentElement.children[0].classList.contains('checked')) {
+        e.target.parentElement.children[0].classList.add('checked');
+        e.target.parentElement.children[0].style.backgroundColor = '#CEFD89';
+    } else {
+        e.target.parentElement.children[0].classList.remove('checked');
+        e.target.parentElement.children[0].style.backgroundColor = '#82868B';
     }
 }
 
@@ -99,8 +124,9 @@ REMOVE_ALL.onclick = function removeTasks() {
     createText();
     removeAllFromStorage();
 }
-
 //--
+
+
 function createText() {
     const SPAN = document.createElement('span');
 
@@ -133,16 +159,17 @@ function createElements(val) {
     function createSVG(xmlsValue, viewBoxValue, className, pathValue) {
         const SVG   = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         const PATH  = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-
+    
         SVG.setAttribute('xmlns', xmlsValue);
         SVG.setAttribute('viewBox', viewBoxValue);
         SVG.setAttribute('class', className);
         PATH.setAttribute('d', pathValue);
         SVG.appendChild(PATH);
-
+    
         return SVG;
     }
 }
+
 
 function addToStorage(task) {
     localStorage.setItem('Tarefas', JSON.stringify(task));
@@ -156,6 +183,7 @@ function removeFromStorage(task) {
     if(tasks.length === 0) {
         localStorage.removeItem('Tarefas');
         createText();
+        tasksAmount();
         return;
     }
     
@@ -169,7 +197,7 @@ function removeAllFromStorage() {
 }
 
 function tasksAmount() {
-    document.getElementById('amount').innerText = JSON.parse(localStorage.getItem('Tarefas')) === null ? 0 : JSON.parse(localStorage.getItem('Tarefas')).length;
+    document.getElementById('amount').innerText = !JSON.parse(localStorage.getItem('Tarefas')) ? 0 : JSON.parse(localStorage.getItem('Tarefas')).length;
 }
 
 function showDate() {
