@@ -1,21 +1,23 @@
+const LIST          = document.querySelector('.tasks');
 const ADD_TASK      = document.querySelectorAll('.addButton');
 const EDIT_TASK     = document.querySelectorAll('.editButton');
 const CHECK_TASK    = document.querySelectorAll('.checkButton');
 const SEARCH_TASK   = document.getElementById('searchButton');
 const INPUT_TASK    = document.getElementById('addTask');
 const REMOVE_ALL    = document.getElementById('removeAll');
+
 const ALL_TASKS     = document.getElementById('all');
 const ACTIVE_TASKS  = document.getElementById('active');
 const DONE_TASKS    = document.getElementById('done');
-const LIST          = document.querySelector('.tasks');
 
 let date            = undefined;
+let option          = [];
 let tasks           = [];
 let i               = 1;
 
 window.onload = function() {
     showDate();
-    showTasks();
+    show();
     getTheme();
 }
 
@@ -51,8 +53,6 @@ LIST.onclick = function(e) {
         }
     } else if (e.target.classList.contains('removeButton')) {
         e.target.parentElement.remove();
-        console.log(e.target.parentElement.children[1].dataset.id);
-        console.log(e.target.parentElement.children[1].value);
         removeFromStorage(Number(e.target.parentElement.children[1].dataset.id));
         console.log('Tarefa removida com sucesso!');
     } else if(e.target.classList.contains('checkButton')) {
@@ -64,8 +64,8 @@ LIST.onclick = function(e) {
     function editTask() {
         const CURRENT_VALUE = e.target.previousElementSibling.value;
         const ID = Number(e.target.previousElementSibling.dataset.id);
+    
         e.target.previousElementSibling.disabled = true;
-        tasks = JSON.parse(localStorage.getItem('Tarefas'));
         tasks.splice(tasks.findIndex(obj => obj.id === ID), 1, {id: ID, nome: CURRENT_VALUE, status: 'ativo'});
         addToStorage(tasks);
         console.log('Tarefa editada com sucesso!'); 
@@ -79,7 +79,6 @@ REMOVE_ALL.onclick = function removeTasks() {
     createText('Nenhuma Tarefa ....');
     removeAllFromStorage();
 }
-//---
 
 INPUT_TASK.onkeydown = function(event) {
     event.key === 'Enter' && INPUT_TASK.id == 'searchTask' ? searchTask() : (event.key === 'Enter' && INPUT_TASK.id == 'addTask' ? addTask() : null);
@@ -90,6 +89,40 @@ SEARCH_TASK.onclick = function() {
     searchTask();
 }
 
+ALL_TASKS.onclick = function() {
+    option = tasks.filter((val) => {
+        return val.status === 'ativo' || val.status === 'completa';
+    });
+
+    LIST.innerHTML = '';
+
+    showTasks(option);
+    tasksAmount(option);
+}
+
+ACTIVE_TASKS.onclick = function() {
+    option = tasks.filter((val) => {
+        return val.status === 'ativo';
+    });
+
+    LIST.innerHTML = '';
+
+    showTasks(option);
+    tasksAmount(option);
+}
+
+DONE_TASKS.onclick = function() {
+    option = tasks.filter((val) => {
+        return val.status === 'completa';
+    });
+
+    LIST.innerHTML = '';
+
+    showTasks(option);
+    tasksAmount(option);
+}
+
+//---
 function addTask() {
     if(INPUT_TASK.value === '') {
         alert('Insira uma tarefa');
@@ -118,16 +151,23 @@ function addTask() {
 }
 
 function doneTask(e) {
+    const ID = Number(e.target.parentElement.children[1].dataset.id);
+    const CURRENT_VALUE = e.target.parentElement.children[1].value;
+
     if(!e.target.parentElement.children[0].classList.contains('checked')) {
         e.target.parentElement.children[0].classList.add('checked');
         e.target.parentElement.children[0].style.backgroundColor = '#CEFD89';
+        tasks.splice(tasks.findIndex(obj => obj.id === ID), 1, {id: ID, nome: CURRENT_VALUE, status: 'completa'});
+        addToStorage(tasks);
     } else {
         e.target.parentElement.children[0].classList.remove('checked');
         e.target.parentElement.children[0].style.backgroundColor = '#82868B';
+        tasks.splice(tasks.findIndex(obj => obj.id === ID), 1, {id: ID, nome: CURRENT_VALUE, status: 'ativo'});
+        addToStorage(tasks);
     }
 }
 
-function showTasks() {
+function show() {
     if(!JSON.parse(localStorage.getItem('Tarefas'))) {
         createText('Nenhuma Tarefa ....');
         return;
@@ -135,23 +175,30 @@ function showTasks() {
         tasks = JSON.parse(localStorage.getItem('Tarefas'));
     }
 
-    tasks.forEach(el => {
-        createElements(el.nome, el.id);
-    });
+    showTasks(tasks);
 
     i = tasks.reduce((a, b) => {
         return a.id > b.id ? a.id : b.id;
     });
     i++;
 
-    tasksAmount();  
+    tasksAmount(tasks);  
 };
+
+function showTasks(array) {
+    array.forEach(el => {
+        createElements(el.nome, el.id);
+    });
+}
 
 function searchTask() {
     const BOX = document.querySelectorAll('.tasks .box');
     let i = 0;
-    tasks = JSON.parse(localStorage.getItem('Tarefas'));
 
+    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
+
+    tasks = JSON.parse(localStorage.getItem('Tarefas'));
+    
     BOX.forEach(el => {
         if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
 
@@ -162,8 +209,9 @@ function searchTask() {
             el.style.display = 'none';
         }
     });
+
     if(i === 0) createText('Nenhuma Tarefa Encontrada ....');
-   // tasksAmount()
+   tasksAmount(tasks);
 }
 
 function createText(txt) {
@@ -212,31 +260,30 @@ function createElements(val, id) {
 
 function addToStorage(task) {
     localStorage.setItem('Tarefas', JSON.stringify(task));
-    tasksAmount();
+    tasksAmount(task);
 }
 
 function removeFromStorage(id) {
-    tasks = JSON.parse(localStorage.getItem('Tarefas'));
     tasks.splice(tasks.findIndex(obj => obj.id === id), 1);
 
     if(tasks.length === 0) {
         localStorage.removeItem('Tarefas');
         createText('Nenhuma Tarefa ....');
-        tasksAmount();
+        tasksAmount(tasks);
         return;
     }
     
     addToStorage(tasks);
-    tasksAmount();
+    tasksAmount(tasks);
 }
 
 function removeAllFromStorage() {
     localStorage.removeItem('Tarefas');
-    tasksAmount();
+    tasksAmount(tasks);
 }
 
-function tasksAmount() {
-    document.getElementById('amount').innerText = !JSON.parse(localStorage.getItem('Tarefas')) ? 0 : JSON.parse(localStorage.getItem('Tarefas')).length;
+function tasksAmount(array) {
+    document.getElementById('amount').innerText = array.length === 0 ? 0 : array.length;
 }
 
 function showDate() {
