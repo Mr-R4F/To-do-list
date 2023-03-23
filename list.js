@@ -11,7 +11,7 @@ const LIST          = document.querySelector('.tasks');
 
 let date            = undefined;
 let tasks           = [];
-let x = []
+let i               = 1;
 
 window.onload = function() {
     showDate();
@@ -40,7 +40,7 @@ LIST.onclick = function(e) {
 
             e.target.parentElement.children[0].style.backgroundColor = '#82868B';
             e.target.parentElement.children[0].classList.remove('edit');
-            editTask(PREVIOUS_VALUE);
+            editTask();
         }
 
         e.target.previousElementSibling.onkeydown = function(event) {
@@ -51,7 +51,9 @@ LIST.onclick = function(e) {
         }
     } else if (e.target.classList.contains('removeButton')) {
         e.target.parentElement.remove();
-        removeFromStorage(e.target.parentElement.children[1].value);
+        console.log(e.target.parentElement.children[1].dataset.id);
+        console.log(e.target.parentElement.children[1].value);
+        removeFromStorage(Number(e.target.parentElement.children[1].dataset.id));
         console.log('Tarefa removida com sucesso!');
     } else if(e.target.classList.contains('checkButton')) {
         doneTask(e);
@@ -59,16 +61,14 @@ LIST.onclick = function(e) {
         return;
     }
 
-    function editTask(previousValue) {
+    function editTask() {
         const CURRENT_VALUE = e.target.previousElementSibling.value;
+        const ID = Number(e.target.previousElementSibling.dataset.id);
         e.target.previousElementSibling.disabled = true;
-        console.log(e.target);
         tasks = JSON.parse(localStorage.getItem('Tarefas'));
-
-        tasks.splice(tasks.findIndex(obj => obj.nome === previousValue), 1, { nome: CURRENT_VALUE, status: 'ativo' });
-        
+        tasks.splice(tasks.findIndex(obj => obj.id === ID), 1, {id: ID, nome: CURRENT_VALUE, status: 'ativo'});
         addToStorage(tasks);
-        console.log('Tarefa editada com sucesso!');
+        console.log('Tarefa editada com sucesso!'); 
     }
 }
 
@@ -90,16 +90,6 @@ SEARCH_TASK.onclick = function() {
     searchTask();
 }
 
-function doneTask(e) {
-    if(!e.target.parentElement.children[0].classList.contains('checked')) {
-        e.target.parentElement.children[0].classList.add('checked');
-        e.target.parentElement.children[0].style.backgroundColor = '#CEFD89';
-    } else {
-        e.target.parentElement.children[0].classList.remove('checked');
-        e.target.parentElement.children[0].style.backgroundColor = '#82868B';
-    }
-}
-
 function addTask() {
     if(INPUT_TASK.value === '') {
         alert('Insira uma tarefa');
@@ -114,37 +104,47 @@ function addTask() {
 
         tasks.push(
             {
+                id: i,
                 nome: INPUT_TASK.value,
                 status: 'ativo'
             }
         )
 
-       /*  let y = x.filter((val) => {
-            return val.status === 'ativo';
-        })
-        console.log(y); */
-
-        createElements(INPUT_TASK.value);
+        createElements(INPUT_TASK.value, i);
         addToStorage(tasks);
+        i++;
         console.log('Tarefa adicionada com sucesso!');
     }
 }
 
-function showTasks() {
-    const TASKS = JSON.parse(localStorage.getItem('Tarefas'));
+function doneTask(e) {
+    if(!e.target.parentElement.children[0].classList.contains('checked')) {
+        e.target.parentElement.children[0].classList.add('checked');
+        e.target.parentElement.children[0].style.backgroundColor = '#CEFD89';
+    } else {
+        e.target.parentElement.children[0].classList.remove('checked');
+        e.target.parentElement.children[0].style.backgroundColor = '#82868B';
+    }
+}
 
-    if(!TASKS) {
+function showTasks() {
+    if(!JSON.parse(localStorage.getItem('Tarefas'))) {
         createText('Nenhuma Tarefa ....');
         return;
-    } else if(document.querySelector('.noTask')) {
-        document.querySelector('.noTask').remove();
+    } else {
+        tasks = JSON.parse(localStorage.getItem('Tarefas'));
     }
-    
-    TASKS.forEach(el => {
-        createElements(el.nome);
+
+    tasks.forEach(el => {
+        createElements(el.nome, el.id);
     });
 
-    tasksAmount();
+    i = tasks.reduce((a, b) => {
+        return a.id > b.id ? a.id : b.id;
+    });
+    i++;
+
+    tasksAmount();  
 };
 
 function searchTask() {
@@ -175,7 +175,7 @@ function createText(txt) {
     LIST.appendChild(SPAN);
 }
 
-function createElements(val) {
+function createElements(val, id) {
     const BOX           = document.createElement('div');
     const TASK          = document.createElement('input');
     const CHECK_BUTTON  = document.createElement('span');
@@ -188,6 +188,7 @@ function createElements(val) {
     TASK.type               = 'text';
     TASK.disabled           = true;
     TASK.value              = val;
+    TASK.setAttribute('data-id', String(id));
     
     BOX.appendChild(CHECK_BUTTON);
     BOX.appendChild(TASK);
@@ -214,9 +215,9 @@ function addToStorage(task) {
     tasksAmount();
 }
 
-function removeFromStorage(task) {
+function removeFromStorage(id) {
     tasks = JSON.parse(localStorage.getItem('Tarefas'));
-    tasks.splice(tasks.findIndex(obj => obj.nome === task), 1);
+    tasks.splice(tasks.findIndex(obj => obj.id === id), 1);
 
     if(tasks.length === 0) {
         localStorage.removeItem('Tarefas');
