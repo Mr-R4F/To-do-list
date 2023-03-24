@@ -11,15 +11,15 @@ const ACTIVE_TASKS  = document.getElementById('active');
 const DONE_TASKS    = document.getElementById('done');
 
 let date            = undefined;
-let option          = [];
+let option          = undefined;
 let tasks           = [];
 let i               = 1;
 
-window.onload = function() {
+window.addEventListener('DOMContentLoaded', function() {
     showDate();
-    show();
+    showTasks();
     getTheme();
-}
+});
 
 //---
 ADD_TASK.forEach(el => {
@@ -51,9 +51,21 @@ LIST.onclick = function(e) {
                 editTask(PREVIOUS_VALUE);
             }
         }
-    } else if (e.target.classList.contains('removeButton')) {
+    } else if(e.target.classList.contains('removeButton')) {
         e.target.parentElement.remove();
         removeFromStorage(Number(e.target.parentElement.children[1].dataset.id));
+
+        if(option) {
+            if(option.length > 0) {
+                option.splice(option.findIndex(obj => obj.id === Number(e.target.parentElement.children[1].dataset.id)), 1);
+                tasksAmount(option);
+            }
+            
+            if(option.length === 0) {
+                createText('Nenhuma Tarefa ....');
+            }
+        }
+       
         console.log('Tarefa removida com sucesso!');
     } else if(e.target.classList.contains('checkButton')) {
         doneTask(e);
@@ -90,35 +102,21 @@ SEARCH_TASK.onclick = function() {
 }
 
 ALL_TASKS.onclick = function() {
-    option = tasks.filter((val) => {
-        return val.status === 'ativo' || val.status === 'completa';
-    });
-
     LIST.innerHTML = '';
-
-    showTasks(option);
-    tasksAmount(option);
+    showTasks();
 }
 
 ACTIVE_TASKS.onclick = function() {
-    option = tasks.filter((val) => {
-        return val.status === 'ativo';
-    });
+    options('ativo');
+    show(option);
 
-    LIST.innerHTML = '';
-
-    showTasks(option);
     tasksAmount(option);
 }
 
 DONE_TASKS.onclick = function() {
-    option = tasks.filter((val) => {
-        return val.status === 'completa';
-    });
-
-    LIST.innerHTML = '';
-
-    showTasks(option);
+    options('completa');
+    show(option);
+    console.log(option);
     tasksAmount(option);
 }
 
@@ -167,7 +165,7 @@ function doneTask(e) {
     }
 }
 
-function show() {
+function showTasks() {
     if(!JSON.parse(localStorage.getItem('Tarefas'))) {
         createText('Nenhuma Tarefa ....');
         return;
@@ -175,7 +173,7 @@ function show() {
         tasks = JSON.parse(localStorage.getItem('Tarefas'));
     }
 
-    showTasks(tasks);
+    show(tasks);
 
     i = tasks.reduce((a, b) => {
         return a.id > b.id ? a.id : b.id;
@@ -185,10 +183,17 @@ function show() {
     tasksAmount(tasks);  
 };
 
-function showTasks(array) {
+function show(array) {
     array.forEach(el => {
         createElements(el.nome, el.id);
     });
+}
+
+function options(statusValue) {
+    option = tasks.filter((val) => {
+        return val.status === statusValue;
+    });
+    LIST.innerHTML = '';
 }
 
 function searchTask() {
@@ -211,7 +216,8 @@ function searchTask() {
     });
 
     if(i === 0) createText('Nenhuma Tarefa Encontrada ....');
-   tasksAmount(tasks);
+
+    tasksAmount(tasks);
 }
 
 function createText(txt) {
@@ -300,5 +306,7 @@ function showDate() {
     document.getElementById('minute').innerText = MINUTES;
     document.getElementById('hour').innerText   = HOURS;
 }
+
+
 
 setInterval(showDate, 1000);
