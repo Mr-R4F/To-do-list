@@ -56,10 +56,9 @@ LIST.onclick = function(e) {
         e.target.parentElement.remove();
         removeFromStorage(Number(e.target.parentElement.children[1].dataset.id));
         filteredTasks.splice(filteredTasks.findIndex(obj => obj.id === Number(e.target.parentElement.children[1].dataset.id)), 1);
+        
         tasksAmount(filteredTasks);
-
-        if(filteredTasks.length === 0 && tasks.length !== 0) createText('Nenhuma Tarefa ....');
-    
+        tasksAmount(tasks);
     } else if(e.target.classList.contains('checkButton')) {
         doneTask(e);
     } else {
@@ -94,24 +93,21 @@ SEARCH_TASK.onclick = function() {
 }
 
 ALL_TASKS.onclick = function() {
-    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
-
+    this.className = 'selected';
+    checkLocalStorage('Nenhuma Tarefa ....', 'ativo');
     LIST.innerHTML = '';
     showTasks();
 }
 
 ACTIVE_TASKS.onclick = function() {
-    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
-
-    filterTasks('ativo');
+    this.className = 'selected';
+    checkLocalStorage('Nenhuma Tarefa Ativa ....', 'ativo');
     show(filteredTasks);
     tasksAmount(filteredTasks);
 }
 
 DONE_TASKS.onclick = function() {
-    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
-
-    filterTasks('completa');
+    checkLocalStorage('Nenhuma Tarefa Concluída ....', 'completa');
     show(filteredTasks);
     tasksAmount(filteredTasks);
 }
@@ -214,10 +210,23 @@ function filterTasks(statusValue) {
         return val.status === statusValue;
     });
 
-    if(!filteredTasks) return;
-
     LIST.innerHTML = '';
 }
+
+/* function verifyLength() {
+    if(filteredTasks.length === 0 && ACTIVE_TASKS.classList.contains('selected')) {
+        createText('Nenhuma Tarefa Ativa ....');
+        console.log('prr funciona');
+        ACTIVE_TASKS.classList.remove('selected');
+    } else if(filteredTasks.length === 0 && DONE_TASKS.classList.contains('selected')) {
+        console.log('1');
+        createText('Nenhuma Tarefa Concluída ....');
+        DONE_TASKS.classList.remove('selected');
+    } else if(tasks.length === 0 && ALL_TASKS.classList.contains('selected')) {
+        createText('Nenhuma Tarefa ....');
+        ALL_TASKS.classList.remove('selected');
+    }
+} */
 
 function createText(txt) {
     const SPAN = document.createElement('span');
@@ -285,6 +294,16 @@ function removeFromStorage(id) {
 function removeAllFromStorage() {
     localStorage.removeItem('Tarefas');
     tasksAmount(tasks);
+}
+
+function checkLocalStorage(msg, statusValue) { //verifica se a tarefa existe
+    if((!localStorage.getItem('Tarefas'))) {
+        document.querySelector('.noTask').remove();
+        createText(msg);
+        return;
+    }
+
+    filterTasks(statusValue);
 }
 
 function tasksAmount(array) {
