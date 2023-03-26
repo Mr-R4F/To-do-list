@@ -11,9 +11,10 @@ const ACTIVE_TASKS  = document.getElementById('active');
 const DONE_TASKS    = document.getElementById('done');
 
 let date            = undefined;
-let option          = undefined;
+let filteredTasks   = [];
 let tasks           = [];
-let i               = 1;
+let id              = 1;
+let showMessage     = false;
 
 window.addEventListener('DOMContentLoaded', function() {
     showDate();
@@ -24,7 +25,7 @@ window.addEventListener('DOMContentLoaded', function() {
 //---
 ADD_TASK.forEach(el => {
     el.onclick = function() {
-       addTask();
+        addTask();
     }
 });
 
@@ -54,19 +55,11 @@ LIST.onclick = function(e) {
     } else if(e.target.classList.contains('removeButton')) {
         e.target.parentElement.remove();
         removeFromStorage(Number(e.target.parentElement.children[1].dataset.id));
+        filteredTasks.splice(filteredTasks.findIndex(obj => obj.id === Number(e.target.parentElement.children[1].dataset.id)), 1);
+        tasksAmount(filteredTasks);
 
-        if(option) {
-            if(option.length > 0) {
-                option.splice(option.findIndex(obj => obj.id === Number(e.target.parentElement.children[1].dataset.id)), 1);
-                tasksAmount(option);
-            }
-            
-            if(option.length === 0) {
-                createText('Nenhuma Tarefa ....');
-            }
-        }
-       
-        console.log('Tarefa removida com sucesso!');
+        if(filteredTasks.length === 0 && tasks.length !== 0) createText('Nenhuma Tarefa ....');
+    
     } else if(e.target.classList.contains('checkButton')) {
         doneTask(e);
     } else {
@@ -86,8 +79,8 @@ LIST.onclick = function(e) {
 
 REMOVE_ALL.onclick = function removeTasks() {
     LIST.innerHTML = '';
-    tasks = [];
-    
+    tasks = filteredTasks = [];
+
     createText('Nenhuma Tarefa ....');
     removeAllFromStorage();
 }
@@ -97,27 +90,30 @@ INPUT_TASK.onkeydown = function(event) {
 }
 
 SEARCH_TASK.onclick = function() {
-    INPUT_TASK.id = 'searchTask';
     searchTask();
 }
 
 ALL_TASKS.onclick = function() {
+    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
+
     LIST.innerHTML = '';
     showTasks();
 }
 
 ACTIVE_TASKS.onclick = function() {
-    options('ativo');
-    show(option);
+    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
 
-    tasksAmount(option);
+    filterTasks('ativo');
+    show(filteredTasks);
+    tasksAmount(filteredTasks);
 }
 
 DONE_TASKS.onclick = function() {
-    options('completa');
-    show(option);
-    console.log(option);
-    tasksAmount(option);
+    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
+
+    filterTasks('completa');
+    show(filteredTasks);
+    tasksAmount(filteredTasks);
 }
 
 //---
@@ -130,22 +126,46 @@ function addTask() {
         if(localStorage.getItem('Tarefas')) {
             tasks = JSON.parse(localStorage.getItem('Tarefas'));
         } else if(document.querySelector('.noTask')) {
-            document.querySelector('.noTask').remove();
+            document.querySelector('.noTask').remove(); 
+            showMessage = false;   
         }
 
         tasks.push(
             {
-                id: i,
+                id: id,
                 nome: INPUT_TASK.value,
                 status: 'ativo'
             }
         )
 
-        createElements(INPUT_TASK.value, i);
+        createElements(INPUT_TASK.value, id);
         addToStorage(tasks);
-        i++;
-        console.log('Tarefa adicionada com sucesso!');
+        id++;
     }
+}
+
+function searchTask() {
+    INPUT_TASK.id = 'searchTask';
+    
+    if((!localStorage.getItem('Tarefas') && !showMessage) && document.querySelector('.noTask')) {
+        document.querySelector('.noTask').remove();
+        createText('Nenhuma Tarefa Encontrada ....');
+        return;
+    }
+
+    const BOX = document.querySelectorAll('.tasks .box');
+
+    tasks = JSON.parse(localStorage.getItem('Tarefas'));
+
+    BOX.forEach(el => {
+        if(el.children[1].value.toLowerCase().indexOf(INPUT_TASK.value.toLowerCase()) !== -1) {
+            el.style.display = 'flex';
+        } else {
+            el.style.display = 'none';   
+        }
+    });
+
+    tasksAmount(tasks);
 }
 
 function doneTask(e) {
@@ -175,10 +195,10 @@ function showTasks() {
 
     show(tasks);
 
-    i = tasks.reduce((a, b) => {
+    id = tasks.reduce((a, b) => {
         return a.id > b.id ? a.id : b.id;
     });
-    i++;
+    id++;
 
     tasksAmount(tasks);  
 };
@@ -189,35 +209,14 @@ function show(array) {
     });
 }
 
-function options(statusValue) {
-    option = tasks.filter((val) => {
+function filterTasks(statusValue) {
+    filteredTasks = JSON.parse(localStorage.getItem('Tarefas')).filter((val) => {
         return val.status === statusValue;
     });
+
+    if(!filteredTasks) return;
+
     LIST.innerHTML = '';
-}
-
-function searchTask() {
-    const BOX = document.querySelectorAll('.tasks .box');
-    let i = 0;
-
-    if(!JSON.parse(localStorage.getItem('Tarefas'))) return;
-
-    tasks = JSON.parse(localStorage.getItem('Tarefas'));
-    
-    BOX.forEach(el => {
-        if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
-
-        if(el.children[1].value.toLowerCase().indexOf(INPUT_TASK.value.toLowerCase()) !== -1) {
-            el.style.display = 'flex';
-            i++;
-        } else {
-            el.style.display = 'none';
-        }
-    });
-
-    if(i === 0) createText('Nenhuma Tarefa Encontrada ....');
-
-    tasksAmount(tasks);
 }
 
 function createText(txt) {
@@ -306,7 +305,5 @@ function showDate() {
     document.getElementById('minute').innerText = MINUTES;
     document.getElementById('hour').innerText   = HOURS;
 }
-
-
 
 setInterval(showDate, 1000);
