@@ -16,12 +16,12 @@ SELECT_BOX.onclick = function toggleTheme() {
 }
 
 THEME.onchange = function(e) {
-   checkMatch(e);
+    checkTheme(e);
 }
 
 function getTheme() {
     if(!localStorage.getItem('Theme')) {
-        checkMatch(THEME);
+        checkTheme(THEME);
         return;
     }
 
@@ -29,7 +29,7 @@ function getTheme() {
     BODY.id === 'light' ? TOGGLE.style.left = '2rem' : TOGGLE.style.left = '0';
 }
 
-function checkMatch(val) {
+function checkTheme(val) {
     if(val.matches) {
         BODY.id = 'dark';
         TOGGLE.style.left = '0';
