@@ -14,7 +14,6 @@ let date            = undefined;
 let filteredTasks   = [];
 let tasks           = [];
 let id              = 1;
-let showMessage     = false;
 
 window.addEventListener('DOMContentLoaded', function() {
     showDate();
@@ -33,6 +32,7 @@ ADD_TASK.forEach(el => {
 LIST.onclick = function(e) {
     if (e.target.classList.contains('editButton')) {
         const PREVIOUS_VALUE = e.target.previousElementSibling.value;
+        
         e.target.previousElementSibling.disabled = false;
         e.target.previousElementSibling.focus();
         e.target.parentElement.children[0].style.backgroundColor = '#FFC353'; //edit flag
@@ -43,7 +43,7 @@ LIST.onclick = function(e) {
 
             e.target.parentElement.children[0].style.backgroundColor = '#82868B';
             e.target.parentElement.children[0].classList.remove('edit');
-            editTask();
+            editTask(PREVIOUS_VALUE);
         }
 
         e.target.previousElementSibling.onkeydown = function(event) {
@@ -55,18 +55,24 @@ LIST.onclick = function(e) {
     } else if(e.target.classList.contains('removeButton')) {
         e.target.parentElement.remove();
         removeFromStorage(Number(e.target.parentElement.children[1].dataset.id));
-
     } else if(e.target.classList.contains('checkButton')) {
         doneTask(e);
     } else {
         return;
     }
 
-    function editTask() {
+    function editTask(previousValue) {
         const CURRENT_VALUE = e.target.previousElementSibling.value;
         const ID = Number(e.target.previousElementSibling.dataset.id);
     
         e.target.previousElementSibling.disabled = true;
+
+        if(tasks.findIndex(obj => obj.id === ID && obj.status === 'completa') !== -1) {
+            alert('Não é possível editar uma tarefa concluída');
+            e.target.previousElementSibling.value = previousValue;
+            return;
+        }
+       
         tasks.splice(tasks.findIndex(obj => obj.id === ID), 1, {id: ID, nome: CURRENT_VALUE, status: 'ativo'});
         addToStorage(tasks);
     }
@@ -142,7 +148,7 @@ function addTask() {
 function searchTask() {
     INPUT_TASK.id = 'searchTask';
     
-    if((!localStorage.getItem('Tarefas') && !showMessage) && document.querySelector('.noTask')) {
+    if(!localStorage.getItem('Tarefas') && document.querySelector('.noTask')) {
         document.querySelector('.noTask').remove();
         createText('Nenhuma Tarefa Encontrada ....');
         return;
@@ -164,6 +170,9 @@ function searchTask() {
 }
 
 function doneTask(e) {
+    console.log(e.target.parentElement.children[0].classList);
+  
+
     const ID = Number(e.target.parentElement.children[1].dataset.id);
     const CURRENT_VALUE = e.target.parentElement.children[1].value;
 
@@ -205,7 +214,7 @@ function getTasks(evt) {
                 if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
 
                 if(filteredTasks.length === 0) {
-                    createText('Nenhuma Tarefa Ativa ....');
+                    createText('Nenhuma Tarefa Ativa ....');-
                     tasksAmount(filteredTasks);
                     return;
                 } else {
@@ -265,7 +274,7 @@ function filterTasks(statusValue) {
     }
     
     if(!localStorage.getItem('Tarefas')) return;
-    
+
     if(typeof statusValue === "object") {
         filteredTasks = JSON.parse(localStorage.getItem('Tarefas')).filter((val) => {
             return val.status;
@@ -354,8 +363,21 @@ function addToStorage(task) {
 function removeFromStorage(id) {
     tasks.splice(tasks.findIndex(obj => obj.id === id), 1);
 
+    if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
+
+    if(ACTIVE_TASKS.classList.contains('selected') && filteredTasks.length > 0) {
+        filteredTasks.splice(filteredTasks.findIndex(obj => obj.id === id), 1);
+        tasksAmount(filteredTasks);
+    }
+    
+    if(ACTIVE_TASKS.classList.contains('selected') && filteredTasks.length === 0) {
+        createText('Nenhuma Tarefa Ativa ....');
+        return;
+    }
+
     if(tasks.length === 0) {
         localStorage.removeItem('Tarefas');
+        createText('Nenhuma Tarefa ....');
         tasksAmount(tasks);
         return;
     }
