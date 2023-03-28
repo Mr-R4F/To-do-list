@@ -186,8 +186,9 @@ function getTasks(evt) {
     if(event !== '') {
         switch (evt.target.id) {
             case 'all':
-                if(tasks.length === 0 && document.querySelector('.noTask')) {
-                    document.querySelector('.noTask').remove();
+                if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
+
+                if(tasks.length === 0) {
                     createText('Nenhuma Tarefa ....');
                     tasksAmount(tasks);
                     return;
@@ -199,29 +200,34 @@ function getTasks(evt) {
                 break;
 
             case 'active':
-                if(filteredTasks.length === 0 && document.querySelector('.noTask')) {
-                    document.querySelector('.noTask').remove();
+                filterTasks('ativo');
+
+                if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
+
+                if(filteredTasks.length === 0) {
                     createText('Nenhuma Tarefa Ativa ....');
                     tasksAmount(filteredTasks);
                     return;
                 } else {
-                    filterTasks('ativo');
                     showTasks(filteredTasks);
                     tasksAmount(filteredTasks);
                 }
                 break;
 
             case 'done':
-                if(filteredTasks.length === 0 && document.querySelector('.noTask')) {
-                    document.querySelector('.noTask').remove();
+                filterTasks('completa');
+
+                if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
+
+                if(filteredTasks.length === 0) {
                     createText('Nenhuma Tarefa Concluída ....');
                     tasksAmount(filteredTasks);
                     return;
                 } else {
-                    filterTasks('completa');
                     showTasks(filteredTasks);
                     tasksAmount(filteredTasks);
                 }
+
                 break;
         
             default:
@@ -248,19 +254,22 @@ function getTasks(evt) {
 };
 
 function showTasks(array) {
-    if(localStorage.getItem('Tarefas')) LIST.innerHTML = '';
-
     array.forEach(el => {
         createElements(el.nome, el.id);
     });
 }
 
 function filterTasks(statusValue) {
+    if(localStorage.getItem('Tarefas') || !localStorage.getItem('Tarefas')) {
+        LIST.innerHTML = '';
+    }
+    
+    if(!localStorage.getItem('Tarefas')) return;
+    
     if(typeof statusValue === "object") {
         filteredTasks = JSON.parse(localStorage.getItem('Tarefas')).filter((val) => {
             return val.status;
         });
-        return;
     }
 
     filteredTasks = JSON.parse(localStorage.getItem('Tarefas')).filter((val) => {
