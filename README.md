@@ -2,4 +2,4 @@
 
 📌 Lista de Tarefas desenvolvida em HTML, CSS (LESS) e JS.
 
-⛏ Versão 1.10
+⛏ Versão 1.12
