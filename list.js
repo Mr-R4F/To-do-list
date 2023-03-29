@@ -10,6 +10,7 @@ const ALL_TASKS     = document.getElementById('all');
 const ACTIVE_TASKS  = document.getElementById('active');
 const DONE_TASKS    = document.getElementById('done');
 
+let show            = false;
 let date            = undefined;
 let filteredTasks   = [];
 let tasks           = [];
@@ -53,8 +54,43 @@ LIST.onclick = function(e) {
             }
         }
     } else if(e.target.classList.contains('removeButton')) {
+        const ID = Number(e.target.parentElement.children[1].dataset.id);
+
         e.target.parentElement.remove();
-        removeFromStorage(Number(e.target.parentElement.children[1].dataset.id));
+
+        removeFromStorage(ID);
+        checkText();
+
+        if(ACTIVE_TASKS.classList.contains('selected') && filteredTasks.length > 0) {
+            filteredTasks.splice(filteredTasks.findIndex(obj => obj.id === ID), 1);
+            tasks.splice(filteredTasks.findIndex(obj => obj.id === ID), 1);
+            addToStorage(tasks);
+            tasksAmount(filteredTasks);
+        }
+
+        if(ACTIVE_TASKS.classList.contains('selected') && filteredTasks.length === 0) {
+            createText('Nenhuma Tarefa Ativa ....');
+            return;
+        }
+
+        if(DONE_TASKS.classList.contains('selected') && filteredTasks.length > 0) {
+            filteredTasks.splice(filteredTasks.findIndex(obj => obj.id === ID), 1);
+            tasks.splice(filteredTasks.findIndex(obj => obj.id === ID), 1);
+            addToStorage(tasks);
+            tasksAmount(filteredTasks);
+        }
+
+        if(DONE_TASKS.classList.contains('selected') && filteredTasks.length === 0) {
+            createText('Nenhuma Tarefa Concluída ....');
+            return;
+        } 
+        
+        if(tasks.length === 0 && filteredTasks.length === 0) {
+            localStorage.removeItem('Tarefas');
+            createText('Nenhuma Tarefa ....');
+            tasksAmount(tasks);
+            return;
+        }
     } else if(e.target.classList.contains('checkButton')) {
         doneTask(e);
     } else {
@@ -75,6 +111,7 @@ LIST.onclick = function(e) {
        
         tasks.splice(tasks.findIndex(obj => obj.id === ID), 1, {id: ID, nome: CURRENT_VALUE, status: 'ativo'});
         addToStorage(tasks);
+        alert('Tarefa editada com sucesso!');
     }
 }
 
@@ -95,22 +132,16 @@ SEARCH_TASK.onclick = function() {
 }
 
 ALL_TASKS.onclick = function(e) {
-    this.className = 'selected';
-
     selectedElement(e);
     getTasks(e);
 }
 
 ACTIVE_TASKS.onclick = function(e) {
-    this.className = 'selected';
-
     selectedElement(e);
     getTasks(e);
 }
 
 DONE_TASKS.onclick = function(e) {
-    this.className = 'selected';
-
     selectedElement(e);
     getTasks(e);
 }
@@ -121,15 +152,19 @@ function addTask() {
         alert('Insira uma tarefa');
     } else {
         if(INPUT_TASK.id === 'searchTask') INPUT_TASK.id = 'addTask';
+        
+        removeClass(ALL_TASKS);
 
-        console.log();
-        if(localStorage.getItem('Tarefas')) {
-            tasks = JSON.parse(localStorage.getItem('Tarefas'));
-        } else if(document.querySelector('.noTask')) {
-            document.querySelector('.noTask').remove();  
+        if(show) {
+            show = false;
+            showTasks(tasks);
         }
 
-        if(tasks.length === 0) LIST.innerHTML = '';
+        checkText();
+
+        if(localStorage.getItem('Tarefas')) tasks = JSON.parse(localStorage.getItem('Tarefas'));
+        
+        if(localStorage.getItem('Tarefas') === '[]') LIST.innerHTML = '';
 
         tasks.push(
             {
@@ -137,7 +172,7 @@ function addTask() {
                 nome: INPUT_TASK.value,
                 status: 'ativo'
             }
-        )
+        );
 
         createElements(INPUT_TASK.value, id);
         addToStorage(tasks);
@@ -148,8 +183,9 @@ function addTask() {
 function searchTask() {
     INPUT_TASK.id = 'searchTask';
     
-    if(!localStorage.getItem('Tarefas') && document.querySelector('.noTask')) {
-        document.querySelector('.noTask').remove();
+    checkText();
+    
+    if(!localStorage.getItem('Tarefas')) {
         createText('Nenhuma Tarefa Encontrada ....');
         return;
     }
@@ -170,9 +206,6 @@ function searchTask() {
 }
 
 function doneTask(e) {
-    console.log(e.target.parentElement.children[0].classList);
-  
-
     const ID = Number(e.target.parentElement.children[1].dataset.id);
     const CURRENT_VALUE = e.target.parentElement.children[1].value;
 
@@ -194,39 +227,41 @@ function getTasks(evt) {
 
     if(event !== '') {
         switch (evt.target.id) {
-            case 'all':
-                if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
+            case 'all':             
+                LIST.innerHTML = '';       
+                checkText();
 
                 if(tasks.length === 0) {
                     createText('Nenhuma Tarefa ....');
                     tasksAmount(tasks);
                     return;
                 } else {
-                    filterTasks(['completa', 'ativo']);
                     showTasks(tasks);
                     tasksAmount(tasks);
                 }
                 break;
 
             case 'active':
-                filterTasks('ativo');
+                show = true;
 
-                if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
+                filterTasks('ativo');
+                checkText();
 
                 if(filteredTasks.length === 0) {
-                    createText('Nenhuma Tarefa Ativa ....');-
+                    createText('Nenhuma Tarefa Ativa ....');
                     tasksAmount(filteredTasks);
                     return;
                 } else {
                     showTasks(filteredTasks);
                     tasksAmount(filteredTasks);
-                }
+                }        
                 break;
 
             case 'done':
-                filterTasks('completa');
+                show = true;
 
-                if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
+                filterTasks('completa');
+                checkText();
 
                 if(filteredTasks.length === 0) {
                     createText('Nenhuma Tarefa Concluída ....');
@@ -236,7 +271,6 @@ function getTasks(evt) {
                     showTasks(filteredTasks);
                     tasksAmount(filteredTasks);
                 }
-
                 break;
         
             default:
@@ -245,7 +279,7 @@ function getTasks(evt) {
     }
 
     if(document.readyState === 'interactive') {
-        if(!JSON.parse(localStorage.getItem('Tarefas'))) {
+        if(!localStorage.getItem('Tarefas') || localStorage.getItem('Tarefas') === '[]') {
             createText('Nenhuma Tarefa ....');
             return;
         } else {
@@ -256,7 +290,7 @@ function getTasks(evt) {
         tasksAmount(tasks);
     }
     
-    id = 1 || tasks.reduce((a, b) => {
+    id = tasks.reduce((a, b) => {
         return a.id > b.id ? a.id : b.id;
     });
     id++;
@@ -269,17 +303,9 @@ function showTasks(array) {
 }
 
 function filterTasks(statusValue) {
-    if(localStorage.getItem('Tarefas') || !localStorage.getItem('Tarefas')) {
-        LIST.innerHTML = '';
-    }
+    if(localStorage.getItem('Tarefas') || !localStorage.getItem('Tarefas')) LIST.innerHTML = '';
     
     if(!localStorage.getItem('Tarefas')) return;
-
-    if(typeof statusValue === "object") {
-        filteredTasks = JSON.parse(localStorage.getItem('Tarefas')).filter((val) => {
-            return val.status;
-        });
-    }
 
     filteredTasks = JSON.parse(localStorage.getItem('Tarefas')).filter((val) => {
         return val.status === statusValue;
@@ -303,12 +329,17 @@ function selectedElement(evt) {
         default:
             break;
     }
+}
 
-    function removeClass(elTarget) {
-        document.querySelectorAll('.bottom .row:last-child .item .selected').forEach(el => {
-            if(el !== elTarget) el.classList.remove('selected');
-        });
-    }
+function removeClass(elTarget) {   
+    document.querySelectorAll('.bottom .row:last-child .item .selected').forEach(el => {
+        elTarget.className = 'selected';
+        el !== elTarget ? el.classList.remove('selected') : null;
+    });
+}
+
+function checkText() {
+    if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
 }
 
 function createText(txt) {
@@ -361,28 +392,15 @@ function addToStorage(task) {
 }
 
 function removeFromStorage(id) {
-    tasks.splice(tasks.findIndex(obj => obj.id === id), 1);
-
-    if(document.querySelector('.noTask')) document.querySelector('.noTask').remove();
-
-    if(ACTIVE_TASKS.classList.contains('selected') && filteredTasks.length > 0) {
-        filteredTasks.splice(filteredTasks.findIndex(obj => obj.id === id), 1);
-        tasksAmount(filteredTasks);
-    }
-    
-    if(ACTIVE_TASKS.classList.contains('selected') && filteredTasks.length === 0) {
-        createText('Nenhuma Tarefa Ativa ....');
-        return;
-    }
-
-    if(tasks.length === 0) {
+    if(localStorage.getItem('Tarefas') === '[]') {
         localStorage.removeItem('Tarefas');
-        createText('Nenhuma Tarefa ....');
-        tasksAmount(tasks);
         return;
     }
-    
-    addToStorage(tasks);
+
+    if(filteredTasks.length === 0) {
+        tasks.splice(tasks.findIndex(obj => obj.id === id), 1);
+        addToStorage(tasks);
+    }
 }
 
 function removeAllFromStorage() {
