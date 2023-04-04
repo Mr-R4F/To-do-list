@@ -10,6 +10,11 @@ const ALL_TASKS     = document.getElementById('all');
 const ACTIVE_TASKS  = document.getElementById('active');
 const DONE_TASKS    = document.getElementById('done');
 
+const PAGE          = document.querySelectorAll('.pagination .page');
+const PREV_BTN      = document.getElementById('back');
+const NEXT_BTN      = document.getElementById('next');
+const DOTS          = document.querySelector('.pagination .dots');
+
 let show            = false;
 let date            = undefined;
 let filteredTasks   = [];
@@ -116,6 +121,7 @@ LIST.onclick = function(e) {
 REMOVE_ALL.onclick = function removeTasks() {
     LIST.innerHTML = '';
     tasks = filteredTasks = [];
+    INPUT_TASK.id = 'addTask';
 
     createText('Nenhuma Tarefa ....');
     removeAllFromStorage();
@@ -123,6 +129,12 @@ REMOVE_ALL.onclick = function removeTasks() {
 
 INPUT_TASK.onkeydown = function(event) {
     event.key === 'Enter' && INPUT_TASK.id === 'searchTask' ? searchTask() : (event.key === 'Enter' && INPUT_TASK.id === 'addTask' ? addTask() : null);
+}
+
+INPUT_TASK.oninput = function() {
+    if(INPUT_TASK.id === 'searchTask') {
+        searchTask();
+    }
 }
 
 SEARCH_TASK.onclick = function() {
@@ -142,6 +154,7 @@ ACTIVE_TASKS.onclick = function(e) {
 DONE_TASKS.onclick = function(e) {
     selectedElement(e);
     getTasks(e);
+
 }
 
 //---
@@ -153,15 +166,17 @@ function addTask() {
         
         removeClass(ALL_TASKS);
 
-        if(show) { //mante as tarefas que já tem e adiciona mais
+        if(show) { //mantem as tarefas que já tem e adiciona mais
             show = false;
             LIST.innerHTML = '';
-            showTasks(tasks);
+            if(localStorage.getItem('Tarefas')) showTasks(tasks);
         } else {
-            if(localStorage.getItem('Tarefas')) tasks = JSON.parse(localStorage.getItem('Tarefas'));
-            
+            if(document.readyState === 'interactive' && localStorage.getItem('Tarefas')) tasks = JSON.parse(localStorage.getItem('Tarefas'));
+        
             if(localStorage.getItem('Tarefas') === '[]') LIST.innerHTML = '';
         }
+
+        if(!localStorage.getItem('Tarefas')) tasks = [];
 
         checkText();
 
@@ -179,9 +194,10 @@ function addTask() {
     }
 }
 
-function searchTask() {  
+function searchTask() {
     const BOX = document.querySelectorAll('.tasks .box');
-    let search = 0;
+    let foundTasks = 0;
+    show = true;
 
     INPUT_TASK.id = 'searchTask';
     tasks = JSON.parse(localStorage.getItem('Tarefas'));
@@ -190,19 +206,19 @@ function searchTask() {
     
     BOX.forEach(el => {
         if(el.children[1].value.toLowerCase().indexOf(INPUT_TASK.value.toLowerCase()) !== -1) {
-            search++;
+            foundTasks++;
             el.style.display = 'flex';
         } else {
             el.style.display = 'none';
         }
     });
 
-    if(!localStorage.getItem('Tarefas') || search === 0) {
+    tasksAmount(foundTasks);
+
+    if(!localStorage.getItem('Tarefas') || foundTasks === 0) {
         createText('Nenhuma Tarefa Encontrada ....');
         return;
     }
-
-    tasksAmount(tasks);
 }
 
 function doneTask(e) {
@@ -401,7 +417,22 @@ function removeAllFromStorage() {
 }
 
 function tasksAmount(array) {
-    document.getElementById('amount').innerText = array.length === 0 ? 0 : array.length;
+    const AMOUNT = document.getElementById('amount');
+
+    if(typeof array !== 'object') {
+        AMOUNT.innerText = array;
+        return;
+    }
+
+    AMOUNT.innerText = array.length === 0 ? 0 : array.length;
+}
+
+function pagination() {
+    const BOX       = document.querySelectorAll('.tasks .box');
+    const LIMIT     = 8; //itens
+    const COUNT     = Math.ceil(BOX.length / LIMIT);
+    console.log(COUNT);
+    const CURRENT   = 0;
 }
 
 function showDate() {
